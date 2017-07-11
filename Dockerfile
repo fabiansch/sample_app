@@ -1,11 +1,19 @@
 FROM ruby:2.4.1
+MAINTAINER Fabian Schimke
+LABEL version="0.0"
+LABEL description="First image with Dockerfile."
 
 # Install apt based dependencies required to run Rails as
 # well as RubyGems. As the Ruby image itself is based on a
 # Debian image, we use apt-get to install those.
-RUN apt-get update && apt-get install -y \
-  build-essential \
-  nodejs
+RUN apt-get clean && \
+    apt-get update && \
+    apt-get install -y \
+      build-essential \
+      nodejs
+
+# cleanup
+RUN apt-get -qy autoremove
 
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
@@ -18,7 +26,8 @@ WORKDIR /sample_app
 # will be cached unless changes to one of those two files
 # are made.
 COPY Gemfile* ./
-RUN gem install bundler && bundle install --jobs 20 --retry 5 --without production
+RUN gem install bundler && \
+    bundle install --jobs 20 --retry 5 --without production
 
 # Copy the main application.
 COPY . ./
