@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails',                   '5.0.3'
+gem 'pg',                      '0.20.0'
 gem 'bcrypt',                  '3.1.11'
 gem 'faker',                   '1.7.3'
 gem 'carrierwave',             '1.1.0'
@@ -18,7 +19,6 @@ gem 'turbolinks',              '5.0.1'
 gem 'jbuilder',                '2.6.1'
 
 group :development, :test do
-  gem 'sqlite3', '1.3.13'
   gem 'byebug',  '9.0.6', platform: :mri
 end
 
@@ -37,7 +37,6 @@ group :test do
 end
 
 group :production do
-  gem 'pg', '0.20.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
