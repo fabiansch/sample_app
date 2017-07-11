@@ -1,4 +1,4 @@
-FROM ruby:2.4.1-slim
+FROM ruby:2.4.1
 MAINTAINER Fabian Schimke
 LABEL version="0.0"
 LABEL description="First image with Dockerfile."
