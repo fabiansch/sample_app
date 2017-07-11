@@ -37,11 +37,10 @@ EXPOSE 80
 # Copy the main application.
 COPY . ./
 
-ARG rails_master_key
 
 # Precompile Rails assets
-RUN bundle exec rails assets:clobber    RAILS_MASTER_KEY=$rails_master_key
-RUN bundle exec rails assets:precompile RAILS_MASTER_KEY=$rails_master_key
+RUN bundle exec rails assets:clobber
+RUN bundle exec rails assets:precompile
 
 # Start puma
 CMD bundle exec rails server
