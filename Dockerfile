@@ -15,7 +15,6 @@ RUN apt-get clean && \
 # cleanup
 RUN apt-get -qy autoremove
 
-
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
 # commands.
