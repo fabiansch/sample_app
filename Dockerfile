@@ -23,7 +23,6 @@ RUN gem install bundler && bundle install --jobs 20 --retry 5 --without developm
 
 # Set Rails to run in production
 ENV RAILS_ENV production
-ENV CCS_BIND_APP bridge-app
 ENV PORT 80
 EXPOSE 80
 
@@ -37,4 +36,4 @@ RUN bundle exec rails assets:clobber    RAILS_MASTER_KEY=$rails_master_key
 RUN bundle exec rails assets:precompile RAILS_MASTER_KEY=$rails_master_key
 
 # Start puma
-CMD bundle exec puma -C config/puma.rb
+CMD bundle exec rails server
