@@ -18,7 +18,7 @@ WORKDIR /sample_app
 # will be cached unless changes to one of those two files
 # are made.
 COPY Gemfile* ./
-RUN gem install bundler && bundle install --jobs 20 --retry 5
+RUN gem install bundler && bundle install --jobs 20 --retry 5 --without production
 
 # Copy the main application.
 COPY . ./
@@ -29,3 +29,4 @@ EXPOSE 3000
 
 ## Start puma
 CMD bundle exec rails server
+
