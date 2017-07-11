@@ -1,0 +1,17 @@
+.dockerignore
+.git
+.gitignore
+Dockerfile
+log
+tmp
+README.*
+
+db/*.sqlite*
+
+config/secrets.yml.key
+
+# Mac OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
