@@ -31,8 +31,6 @@ RUN gem install bundler && \
 
 # Set Rails to run in production
 ENV RAILS_ENV production
-ENV PORT 80
-EXPOSE 80
 
 # Copy the main application.
 COPY . ./
@@ -41,6 +39,10 @@ COPY . ./
 # Precompile Rails assets
 RUN bundle exec rails assets:clobber
 RUN bundle exec rails assets:precompile
+
+# Run the image as a non-root user
+RUN useradd -m myuser
+USER myuser
 
 # Start puma
 CMD bundle exec rails server
