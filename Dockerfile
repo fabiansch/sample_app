@@ -36,6 +36,10 @@ COPY . ./
 # from the outside.
 EXPOSE 3000
 
+# Run the image as a non-root user
+RUN useradd -m myuser
+USER myuser
+
 ## Start puma
 CMD bundle exec rails server
 
