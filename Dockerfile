@@ -35,10 +35,10 @@ ENV RAILS_ENV production
 # Copy the main application.
 COPY . ./
 
-
 # Precompile Rails assets
 RUN bundle exec rails assets:clobber
 RUN bundle exec rails assets:precompile
+RUN bundle exec rails assets:clean
 
 # Run the image as a non-root user
 RUN useradd -m myuser
