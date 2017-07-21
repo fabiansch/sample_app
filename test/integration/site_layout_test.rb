@@ -21,6 +21,7 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
     assert_select "title", full_title("Sign Up")
     get login_path
     assert_select "title", full_title("Log in")
+    log_in_as(@user)
     get edit_user_path @user
     assert_select "title", full_title("Edit #{@user.name}")
   end
