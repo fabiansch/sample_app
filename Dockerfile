@@ -27,6 +27,7 @@ WORKDIR /sample_app
 # are made.
 COPY Gemfile* ./
 RUN gem install bundler && \
+    bundle update && \
     bundle install --jobs 20 --retry 5 --without production
 
 # Copy the main application.
