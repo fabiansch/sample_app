@@ -27,6 +27,7 @@ WORKDIR /sample_app
 # are made.
 COPY Gemfile Gemfile.lock ./
 RUN gem install bundler && \
+    bundle update && \
     bundle install --jobs 20 --retry 5 --without development test
 
 # Set Rails to run in production

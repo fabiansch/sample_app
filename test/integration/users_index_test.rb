@@ -1,4 +1,5 @@
 require 'test_helper'
+require "will_paginate"
 
 class UsersIndexTest < ActionDispatch::IntegrationTest
 
@@ -6,14 +7,16 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     @user       = users :bob
     @admin      = users :bob
     @non_admin  = users :ana
+    @activated      = users(:bob)
+    @non_activated  = users(:non_activated)
   end
 
-  test "index including paginagion" do
+  test "index lists activated users including paginagion" do
     log_in_as @user
     get users_path
     assert_template 'users/index'
     assert_select 'div.pagination', count: 2
-    User.paginate(page: 1).each do |user|
+    User.where(activated: true).paginate(page: 1).each do |user|
       assert_select 'a[href=?]', user_path(user), text: user.name
     end
   end
@@ -23,7 +26,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     get users_path
     assert_template 'users/index'
     assert_select 'div.pagination'
-    first_page_of_users = User.paginate page: 1
+    first_page_of_users = User.where(activated: true).paginate page: 1
     first_page_of_users.each do |user|
       assert_select 'a[href=?]', user_path(user), text: user.name
       unless user == @admin
@@ -39,5 +42,11 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     log_in_as @non_admin
     get users_path
     assert_select 'a', text: 'delete', count: 0
+  end
+
+  test "index does not list unactivated user" do
+    log_in_as @admin
+    get users_path
+    assert_select 'a', text: @non_activated.name, count: 0
   end
 end
