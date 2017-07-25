@@ -14,6 +14,13 @@ ana:
   activated: true
   activated_at: <%= Time.zone.now %>
 
+non_activated:
+  name: non_activated
+  email: non_activated@example.com
+  password_digest: <%= User.digest('password') %>
+  activated: false
+  activated_at:
+
 michael:
   name: Michael Example
   email: michael@example.com
