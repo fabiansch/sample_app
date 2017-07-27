@@ -11,11 +11,11 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     get new_password_reset_path
     assert_template 'password_resets/new'
     # invalid email
-    post password_resets_new_path, params: { password_reset: { email: "" } }
+    post password_resets_path, params: { password_reset: { email: "" } }
     assert_not flash.empty?
     assert_template 'password_resets/new'
     # valid email
-    post password_resets_new_path,
+    post password_resets_path,
          params: { password_reset: { email: @user.email } }
     assert_not_equal  @user.password_reset_digest,
                       @user.reload.password_reset_digest
@@ -40,19 +40,19 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     assert_template 'password_resets/edit'
     assert_select "input[name='password_reset[email]'][type=hidden][value=?]", user.email
     # invalid password & confirmation
-    post edit_password_reset_path(user.password_reset_token,
+    patch password_reset_path(user.password_reset_token,
          params: { password_reset: {  email: user.email,
                                       password:               'foobaz',
                                       password_confirmation:  'barquux' } })
     #assert_select 'div#error_explanation'
     # empty password
-    post edit_password_reset_path(user.password_reset_token,
+    patch password_reset_path(user.password_reset_token,
          params: { password_reset: {  email: user.email,
                                       password:               '',
                                       password_confirmation:  '' } })
     #assert_select 'div#error_explanation'
     # valid password & confirmation
-    post edit_password_reset_path(user.password_reset_token,
+    patch password_reset_path(user.password_reset_token,
          params: { password_reset: {  email: user.email,
                                       password_reset_token: user.password_reset_token, # necessary?
                                       password:               'newpassword',
