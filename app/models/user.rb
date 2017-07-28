@@ -53,8 +53,8 @@ class User < ApplicationRecord
   # sets pasword reset attributes
   def create_password_reset_digest
     self.password_reset_token = User.new_token
-    update_attributes(password_reset_digest:  User.digest(password_reset_token),
-                      password_reset_sent_at: Time.zone.now)
+    update_columns( password_reset_digest:  User.digest(password_reset_token),
+                    password_reset_sent_at: Time.zone.now)
   end
 
   # sends password reset instructions
