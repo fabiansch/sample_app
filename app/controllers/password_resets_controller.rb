@@ -35,8 +35,9 @@ class PasswordResetsController < ApplicationController
       password = params[:password_reset][:password]
       password_confirmation = params[:password_reset][:password_confirmation]
 
-      if @user.update_attributes({ password: password,
-                                  password_confirmation: password_confirmation})
+      if @user.update_attributes({  password: password,
+                                    password_confirmation: password_confirmation,
+                                    password_reset_at: Time.zone.now })
         flash[:success] = "Changes successfully saved."
         log_in @user
         redirect_to @user
