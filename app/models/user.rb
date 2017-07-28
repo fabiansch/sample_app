@@ -29,7 +29,7 @@ class User < ApplicationRecord
   end
 
   # stores pasword digest in database
-  def password_reset
+  def create_password_reset_digest
     self.password_reset_token = User.new_token
     update_attribute(:password_reset_digest, User.digest(password_reset_token))
   end
