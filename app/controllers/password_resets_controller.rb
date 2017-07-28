@@ -23,24 +23,24 @@ class PasswordResetsController < ApplicationController
   end
 
   def update
-    password = params[:user][:password]
-    password_confirmation = params[:user][:password_confirmation]
-
     if params[:user][:password].empty?
       @user.errors.add(:password, "can't be empty")
       render 'edit'
-    elsif @user.update_attributes( password: password,
-                                password_confirmation: password_confirmation,
-                                password_reset_at: Time.zone.now )
-      flash[:success] = "Password successfully saved."
+    elsif @user.update_attributes(  user_params.merge(
+                                    password_reset_at: Time.zone.now))
       log_in @user
+      flash[:success] = "Password has been reset."
       redirect_to @user
     else
-      render 'password_resets/edit'
+      render 'edit'
     end
   end
 
   private
+
+  def user_params
+    params.require(:user).permit(:password, :password_confirmation)
+  end
 
   def get_user
     @user = User.find_by(email: params[:email])
