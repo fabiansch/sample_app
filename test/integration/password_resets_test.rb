@@ -51,8 +51,8 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
          params: {  email: user.email,
                     user: { password:               '',
                             password_confirmation:  '' } })
-    #assert_not is_logged_in?
-    #assert_select 'div#error_explanation'
+    assert_not is_logged_in?
+    assert_select 'div#error_explanation'
     # valid password & confirmation
     patch password_reset_path(user.password_reset_token,
          params: {  email: user.email,
