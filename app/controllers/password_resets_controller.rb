@@ -1,17 +1,9 @@
 class PasswordResetsController < ApplicationController
+  before_action :get_user,          only: [:edit, :update]
+  before_action :valid_user,        only: [:edit, :update]
+  before_action :check_expiration,  only: [:edit, :update]
+
   def new
-  end
-
-  def edit
-    user = User.find_by(email: params[:email])
-    if user &&
-       user.authenticated?(:password_reset, params[:id]) &&
-       user.activated?
-
-    else
-      flash[:danger] = "Invalid password reset token."
-      redirect_to root_url
-    end
   end
 
   def create
@@ -27,26 +19,49 @@ class PasswordResetsController < ApplicationController
     end
   end
 
+  def edit
+  end
+
   def update
-    @user = User.find_by(email: params[:password_reset][:email])
-    token = params[:password_reset][:password_reset_token]
-
-    if @user && @user.authenticated?(:password_reset, token)
-      password = params[:password_reset][:password]
-      password_confirmation = params[:password_reset][:password_confirmation]
-
-      if @user.update_attributes({  password: password,
-                                    password_confirmation: password_confirmation,
-                                    password_reset_at: Time.zone.now })
-        flash[:success] = "Changes successfully saved."
-        log_in @user
-        redirect_to @user
-      else
-        flash.now[:danger] = "Uuuups.."
-        render 'password_resets/edit'
-      end
+    if params[:user][:password].empty?
+      @user.errors.add(:password, "can't be empty")
+      render 'edit'
+    elsif @user.update_attributes(user_params.merge(password_reset_attributes))
+      log_in @user
+      flash[:success] = "Password has been reset."
+      redirect_to @user
+    else
+      render 'edit'
     end
+  end
 
+  private
 
+  def user_params
+    params.require(:user).permit(:password, :password_confirmation)
+  end
+
+  def get_user
+    @user = User.find_by(email: params[:email])
+  end
+
+  # confirms a valid user
+  def valid_user
+    unless  @user && @user.activated? &&
+            @user.authenticated?(:password_reset, params[:id])
+      redirect_to root_url
+    end
+  end
+
+  # checks expiration of reset token
+  def check_expiration
+    if @user.password_reset_expired?
+      flash[:danger] = "Password reset has expired."
+      redirect_to new_password_reset_url
+    end
+  end
+
+  def password_reset_attributes
+    {password_reset_at: Time.zone.now, password_reset_digest: nil}
   end
 end

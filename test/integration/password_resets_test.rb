@@ -38,30 +38,56 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     # right email, right token
     get edit_password_reset_path(user.password_reset_token, email: user.email)
     assert_template 'password_resets/edit'
-    assert_select "input[name='password_reset[email]'][type=hidden][value=?]", user.email
+    assert_select "input[name=email][type=hidden][value=?]", user.email
     # invalid password & confirmation
     patch password_reset_path(user.password_reset_token,
-         params: { password_reset: {  email: user.email,
-                                      password:               'foobaz',
-                                      password_confirmation:  'barquux' } })
-    #assert_select 'div#error_explanation'
+         params: {  email: user.email,
+                    user: { password:               'foobaz',
+                            password_confirmation:  'barquux' } })
+    assert_not is_logged_in?
+    assert_select 'div#error_explanation'
     # empty password
     patch password_reset_path(user.password_reset_token,
-         params: { password_reset: {  email: user.email,
-                                      password:               '',
-                                      password_confirmation:  '' } })
-    #assert_select 'div#error_explanation'
+         params: {  email: user.email,
+                    user: { password:               '',
+                            password_confirmation:  '' } })
+    assert_not is_logged_in?
+    assert_select 'div#error_explanation'
     # valid password & confirmation
     patch password_reset_path(user.password_reset_token,
-         params: { password_reset: {  email: user.email,
-                                      password_reset_token: user.password_reset_token, # necessary?
-                                      password:               'newpassword',
-                                      password_confirmation:  'newpassword' } })
+         params: {  email: user.email,
+                    user: { password:               'newpassword',
+                            password_confirmation:  'newpassword' } })
     assert is_logged_in?
     assert_not flash.empty?
     assert user.reload.password_reset_at > user.password_reset_sent_at
     assert_redirected_to user
+  end
 
+  test "expired token" do
+    get new_password_reset_path
+    post password_resets_path,
+         params: { password_reset: { email: @user.email } }
+    @user = assigns :user
+    @user.update_attribute(:password_reset_sent_at, 3.hours.ago)
+    patch password_reset_path(@user.password_reset_token),
+          params: { email: @user.email,
+                    user: { password:               'foobar',
+                            password_confirmation:  'foobar' } }
+    assert_response :redirect
+    follow_redirect!
+    assert_match /expired/i, response.body
+  end
 
+  test "after successful password reset is password_reset_digest nil" do
+    get new_password_reset_path
+    post password_resets_path,
+         params: { password_reset: { email: @user.email } }
+    @user = assigns :user
+    patch password_reset_path(@user.password_reset_token),
+          params: { email: @user.email,
+                    user: { password:               'foobar',
+                            password_confirmation:  'foobar' } }
+    assert_nil @user.reload.password_reset_digest
   end
 end
