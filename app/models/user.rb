@@ -28,12 +28,6 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, User.digest(remember_token))
   end
 
-  # stores pasword digest in database
-  def password_reset
-    self.password_reset_token = User.new_token
-    update_attribute(:password_reset_digest, User.digest(password_reset_token))
-  end
-
   # returns true if the given token matches the digest
   def authenticated?(attribute, token)
     digest = send "#{attribute}_digest"
@@ -54,6 +48,13 @@ class User < ApplicationRecord
   # sends activation email
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
+  end
+
+  # sets pasword reset attributes
+  def create_password_reset_digest
+    self.password_reset_token = User.new_token
+    update_attributes(password_reset_digest:  User.digest(password_reset_token),
+                      password_reset_sent_at: Time.zone.now)
   end
 
   # sends password reset instructions

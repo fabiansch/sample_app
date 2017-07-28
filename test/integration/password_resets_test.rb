@@ -59,6 +59,7 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
                                       password_confirmation:  'newpassword' } })
     assert is_logged_in?
     assert_not flash.empty?
+    assert user.reload.password_reset_at > user.password_reset_sent_at
     assert_redirected_to user
 
 
