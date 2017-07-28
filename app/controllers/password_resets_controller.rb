@@ -26,8 +26,7 @@ class PasswordResetsController < ApplicationController
     if params[:user][:password].empty?
       @user.errors.add(:password, "can't be empty")
       render 'edit'
-    elsif @user.update_attributes(  user_params.merge(
-                                    password_reset_at: Time.zone.now))
+    elsif @user.update_attributes(user_params.merge(password_reset_attributes))
       log_in @user
       flash[:success] = "Password has been reset."
       redirect_to @user
@@ -60,5 +59,9 @@ class PasswordResetsController < ApplicationController
       flash[:danger] = "Password reset has expired."
       redirect_to new_password_reset_url
     end
+  end
+
+  def password_reset_attributes
+    {password_reset_at: Time.zone.now, password_reset_digest: nil}
   end
 end
