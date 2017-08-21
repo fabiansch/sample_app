@@ -98,9 +98,9 @@ class User < ApplicationRecord
     following.include? other_user
   end
 
-  # sends weekly summery
-  def send_weekly_summery
-    UserMailer.weekly_summery(self).deliver_now
+  # sends weekly summary
+  def send_weekly_summary
+    UserMailer.weekly_summary(self).deliver_now
   end
 
   private
