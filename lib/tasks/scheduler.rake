@@ -1,7 +1,7 @@
 desc "This task is called by the Heroku scheduler add-on"
 
 task :send_weekly_summery => :environment do
-  if Date.today.wday.zero?
+  if Date.today.wday == Date.today.monday.wday
     User.all.each do |user|
       date_of_newest_feed_entry = nil
 
