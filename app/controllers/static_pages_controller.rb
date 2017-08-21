@@ -3,6 +3,7 @@ class StaticPagesController < ApplicationController
     if logged_in?
       @micropost = current_user.microposts.build
       @feed_items = current_user.feed.paginate(page: params[:page])
+      current_user.update_column(:last_login, Time.zone.now)
     end
   end
 

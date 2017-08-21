@@ -76,8 +76,6 @@ class User < ApplicationRecord
     password_reset_sent_at < 2.hours.ago
   end
 
-  # Defines a proto-feed.
-  # See "Following users" for the full implementation.
   def feed
     following_ids = "SELECT followed_id FROM relationships
                      WHERE  follower_id = :user_id"
@@ -98,6 +96,11 @@ class User < ApplicationRecord
   # returns true if the current user is following the other user
   def following? other_user
     following.include? other_user
+  end
+
+  # sends weekly summery
+  def send_weekly_summery
+    UserMailer.weekly_summery(self).deliver_now
   end
 
   private
